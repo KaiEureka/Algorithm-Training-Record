@@ -1,0 +1,68 @@
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <cstdio>
+#include <algorithm>
+#include <cmath>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <unordered_set>
+#include <set>
+#include <queue>
+#include <stack>
+#include <list>
+//#pragma GCC optimize(2)
+#define int long long
+#define i32 signed
+using namespace std;
+
+int sum,n,a[200005],b[200005],tsum,cnt0,B[200005];
+int nowmaxrenum;
+void initilization()
+{
+	sum=0;
+	cnt0=0;
+}
+
+void solution()
+{
+	scanf("%lld",&n);
+	for(int i=1;i<=n;i++)cin>>a[i],sum+=a[i];
+	for(int r=1;r<=2;r++)
+	{
+		nowmaxrenum=0;
+		for(int i=1;i<=n;i++)B[i]=0;
+		for(int i=cnt0+1;i<=n;i++)
+		{
+			B[a[i]]++;
+			if(B[a[i]]==2&&a[i]>nowmaxrenum)
+				nowmaxrenum=a[i];
+			a[i]=nowmaxrenum;
+			if(r==1)sum+=a[i];
+			if(nowmaxrenum==0)cnt0++;
+		}
+// 		for(int i=1;i<=n;i++)
+// 			cout<<a[i]<<' ';
+// 		cout<<endl;
+// 		cout<<cnt0<<endl;
+	}
+	
+	for(int i=3;i<=n;i++)
+	{
+		sum+=a[i]*(n-i+1);
+	}
+	printf("%lld\n",sum);
+}
+
+i32 main()
+{
+	int T;
+	scanf("%lld",&T);
+	while(T--)
+	{
+		initilization();
+		solution();
+	}
+	return 0;
+}

@@ -1,0 +1,124 @@
+/*
+ANALYSIS:
+可能是我目前为止做过的最复杂的dp题，当然也可能单纯只是因为我想了一个麻烦的做法，有更简单的做法没想到。WA的时候完全没查样例，独立做出来的这道估计银首DP题。
+出自xcpc北京市赛
+https://qoj.ac/contest/1464/problem/7996
+*/
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <cstdio>
+#include <algorithm>
+#include <cmath>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+#include <queue>
+#include <stack>
+#include <ctime>
+#include <random>
+#define int long long
+#define endl '\n'
+using namespace std;
+const int N=1e3+5;
+const int mx=1e3;
+const int mod=1e9+7;
+int A[N][N*10],psum[N];
+int n,k,m;
+string S;
+
+void cal()
+{
+	A[0][0]=1;
+	for (int j=1;j<=mx*10;j++) A[0][j]=0;
+	for (int i=1;i<=mx;i++){
+		for (int j=0;j<=mx*10;j++){
+			for (int k=max(j-9,0ll);k<=j;k++){
+				A[i][j]=(A[i][j]+A[i-1][k])%mod;
+			}
+		}
+	}
+}
+
+int C(int value) //f-1（value）的集合中小于N的个数
+{
+	vector<int> ans(n+5,0);
+	for (int i=1;i<=n;i++) //后i位
+	{
+		int x=(int)(S[n-i+1]-'0'),cnt=0;
+		for (int j=0;j<=x-1&&value-psum[n-i]-j>=0;j++) cnt=(cnt+A[i-1][value-psum[n-i]-j])%mod;
+		ans[i]=(cnt+ans[i-1])%mod;
+	}
+	return ans[n]%mod;
+}
+
+inline int f(int n)
+{
+	int res=0;
+	while(n>0)
+	{
+		res+=n%10;
+		n/=10;
+	}
+	return res;
+}
+
+void solution()
+{
+	cin>>S>>k>>m;
+	n=S.length();
+	S=' '+S;
+	psum[0]=0;
+	for(int i=1;i<=n;i++)
+	{
+		psum[i]=S[i]-'0'+psum[i-1];
+	}
+	int finalans=0;
+	for(int i=1;i<=9000;i++)
+	{
+		if(cmp(S,i)==0)continue;
+		int ti=i;
+		for(int t=1;t<=k-1;t++)
+		{
+			if(ti<=9)break;
+			ti=f(ti);
+		}
+		if(ti==m)
+		{
+			//cout<<i<<' '<<C(i)<<endl;
+			finalans=(finalans+C(i))%mod;
+		}
+	}
+	
+	//特判f(N)=m
+	int ti=0;
+	for(int i=1;i<=S.length()-1;i++)ti+=S[i]-'0';
+	for(int t=1;t<=k-1;t++)
+	{
+		if(ti<=9)break;
+		ti=f(ti);
+	}
+	if(ti==m)finalans++;
+
+	cout<<finalans<<endl;
+}
+
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+	//freopen("/Users/Kai/NewCode/contest/VPXCPC/input.txt","r",stdin);
+	cal();
+    int T = 1;
+    cin >> T;
+    for (int i=1;i<=T;i++) {
+        try {
+			//cerr<<"Case #"<<i<<": "<<endl;
+            solution();
+        } catch (const char* e) {
+           // cerr << "Caught exception in solution: " << e << endl;
+        }
+    }
+    return 0;
+}
